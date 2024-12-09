@@ -320,6 +320,8 @@ module WorkflowMgr
       # Parse the output of the submit command
       if output=~/^Submitted batch job (\d+)/
         return $1,output
+      elsif output=~/^This is a dryrun/
+        return $1,output
       elsif output=~/Batch job submission failed: Socket timed out/
 
         WorkflowMgr.stderr("WARNING: '#{output}', looking to see if job was submitted anyway...", 1)
