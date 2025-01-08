@@ -318,13 +318,19 @@ module WorkflowMgr
       tf.flush()
 
       # Run the submit command script
-      output=`/bin/sh #{tf.path} 2>&1`.chomp
+      if WorkflowMgr.DRYRUN
+        output="This is a dryrun"
+      else
+        output=`/bin/sh #{tf.path} 2>&1`.chomp
+      end
 
       WorkflowMgr.log("Submitted #{task.attributes[:name]} using '/bin/sh #{tf.path} 2>&1' with input {{#{envstr + cmd}}}")
       WorkflowMgr.stderr("Submitted #{task.attributes[:name]} using '/bin/sh #{tf.path} 2>&1' with input {{#{envstr + cmd}}}",4)
 
       # Parse the output of the submit command
       if output=~/Job <(\d+)> is submitted to (default )*queue/
+        return $1,output
+      elsif output=~/^This is a dryrun/
         return $1,output
       else
         return nil,output
