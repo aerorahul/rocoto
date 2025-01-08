@@ -217,10 +217,16 @@ module WorkflowMgr
       WorkflowMgr.stderr("Submitting #{task.attributes[:name]} using #{cmd} < #{tf.path} with input {{#{input}}}",4)
 
       # Run the submit command
-      output=`#{cmd} < #{tf.path} 2>&1`.chomp()
+      if WorkflowMgr.DRYRUN
+        output="This is a dryrun"
+      else
+        output=`#{cmd} < #{tf.path} 2>&1`.chomp()
+      end
 
       # Parse the output of the submit command
       if output=~/^(\d+)(\.[a-zA-Z0-9-]+)*$/
+        return $1,output
+      elsif output=~/^This is a dryrun/
         return $1,output
       else
         return nil,output

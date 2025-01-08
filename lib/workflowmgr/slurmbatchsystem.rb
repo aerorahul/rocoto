@@ -316,6 +316,7 @@ module WorkflowMgr
         output="This is a dryrun"
       else
         output=`#{cmd} < #{tf.path} 2>&1`.chomp()
+      end
 
       # Parse the output of the submit command
       if output=~/^Submitted batch job (\d+)/
